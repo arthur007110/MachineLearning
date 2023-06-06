@@ -1,15 +1,12 @@
-
 def rateCar(car):
   buying, maint, doors, persons, lug_boot, safety, rating = car
 
-  if(safety == 'low'):
+  if(safety == 'low' or persons == '2'):
     return 'unacc'
-  if(persons == '2'):
-    return 'unacc'
-  
+
   if(maint == 'vhigh'):
     return 'unacc'
-  
+
   if(buying in ['high', 'vhigh']):
     return 'acc'
 
@@ -18,12 +15,8 @@ def rateCar(car):
 
   if(maint in ['low', 'med'] ):
     return 'good'
-    
+
   return 'acc'
-
-def printCar(car, end='[]\n'):
-  print(' \t'.join(car), end=end)
-
 
 filename = 'car.data'
 
@@ -33,14 +26,6 @@ infile.close()
 
 lines = data.split('\n')
 cars = [line.split(',') for line in lines]
-
-
-
-max_score = 20
-
-car_atributes_list = ['buying', 'maint', 'doors', 'persons', 'lug_boot', 'safety']
-
-score_classes = ['unacc', 'acc', 'good', 'vgood', 'vgood']
 
 classified_cars = dict()
 total_classified_cars = {
