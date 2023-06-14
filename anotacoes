@@ -1,0 +1,15 @@
+good
+  - manutenção não pode ser ['high', 'vhigh']
+  + pessoas não pode ser 2
+  + segurança não pode ser 'low'
+
+vgood
+  + segurança sempre 'high'
+  + manutenção não pode ser 'vhigh'
+  + porta-malas não pode ser pequeno
+  + pessoas não pode ser 2
+  + segurança não pode ser 'low'
+
+acc
+  + segurança não pode ser 'low'
+  + pessoas não pode ser 2
