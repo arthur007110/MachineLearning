@@ -43,6 +43,7 @@ neigh = KNeighborsClassifier(n_neighbors=7, weights="distance")
 neigh.fit(X, y)
 
 testValues = [[float(j) for j in i[parameter_amount:]] for i in testSet]
+print(testValues[0])
 predictions = neigh.predict(testValues)
 
 validatePredictions(predictions, testSet, numericalClasses)

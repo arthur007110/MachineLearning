@@ -1,23 +1,14 @@
-from sklearn.neighbors import KNeighborsClassifier
+from algorithm.knn import * 
 import math
 
-def validatePredictions(predictions, testSet, numericalClasses): 
-  correct = 0
-  incorrect = 0
-  for i in range(len(predictions)):
-    if predictions[i] != numericalClasses[testSet[i][0]]:
-      incorrect += 1
-    else:
-      correct += 1
-  print("Correct: ", correct, "Incorrect: ", incorrect)
+KNN = KNN(k=15)
 
-data = open("wine/wine.data", "r")
+parameter_amount = 13
+data = open("../K-NN/wine/wine.data", "r")
 data = data.read()
 data = data.split("\n")
 data = data[:-1]
 data = [i.split(",") for i in data]
-
-parameter_amount = 13
 
 numericalClasses = {}
 classesData = {}
@@ -36,13 +27,17 @@ for i in classesData:
 
 X = [[float(j) for j in i[1:]] for i in knowldegeBase]
 y = [numericalClasses[i[0]] for i in knowldegeBase]
-
-neigh = KNeighborsClassifier(n_neighbors=1, weights="distance")
-neigh.fit(X, y)
-
-
 testValues = [[float(j) for j in i[1:]] for i in testSet]
-print(testSet[0])
-predictions = neigh.predict(testValues)
 
-validatePredictions(predictions, testSet, numericalClasses)
+KNN.fit(X, y)
+
+predictions = [KNN.predict(i) for i in testValues]
+cont = 0
+t = 0
+for i in range(len(predictions)):
+  if predictions[i] != numericalClasses[testSet[i][0]]:
+    t += 1
+  else:
+    cont += 1
+
+print("Correct: ", cont, "Incorrect: ", t)
