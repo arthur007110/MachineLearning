@@ -32,12 +32,12 @@ testValues = [[float(j) for j in i[1:]] for i in testSet]
 KNN.fit(X, y)
 
 predictions = [KNN.predict(i) for i in testValues]
-cont = 0
-t = 0
+correct = 0
+incorrect = 0
 for i in range(len(predictions)):
-  if predictions[i] != numericalClasses[testSet[i][0]]:
-    t += 1
+  if predictions[i] != numericalClasses[testSet[i][-1]]:
+    incorrect += 1
   else:
-    cont += 1
+    correct += 1
 
-print("Correct: ", cont, "Incorrect: ", t)
+print("Correct: ", correct, "Incorrect: ", incorrect, "Accuracy: ", correct/(correct+incorrect))
