@@ -15,7 +15,6 @@ def confusionMatrix(predictions, realValues, numericalClasses):
 
     for i in range(len(predictions)):
        matrix[predictions[i]][numericalClasses[realValues[i][0]]] += 1
-    #matrix[numericalClasses[realValues[i]]][predictions[i]] += 1
     printar(matrix)
     return matrix
 
@@ -55,14 +54,42 @@ for i in classesData:
   knowldegeBase += classesData[i][math.ceil(len(classesData[i])/3.5):math.ceil(len(classesData[i])/2)]
 
 
-X = [[float(j) for j in i[parameter_amount:]] for i in knowldegeBase]
+X = [[float(j) for j in i[1:]] for i in knowldegeBase]
 y = [numericalClasses[i[0]] for i in knowldegeBase]
+testValues = [[float(j) for j in i[1:]] for i in testSet]
 
-neigh = KNeighborsClassifier(n_neighbors=7, weights="distance")
+neigh = KNeighborsClassifier(n_neighbors=1, weights="distance")
 neigh.fit(X, y)
 
-testValues = [[float(j) for j in i[parameter_amount:]] for i in testSet]
 predictions = neigh.predict(testValues)
 
-validatePredictions(predictions, testSet, numericalClasses)
-confusionMatrix(predictions, testSet, numericalClasses)
+correct = 0
+incorrect = 0
+for i in range(len(predictions)):
+  if predictions[i] != numericalClasses[testSet[i][0]]:
+    incorrect += 1
+  else:
+    correct += 1
+
+print("Correct: ", correct, "Incorrect: ", incorrect, "Accuracy: ", correct/(correct+incorrect))
+
+matrix = confusionMatrix(predictions, testSet, numericalClasses)
+
+recall = []
+for i in matrix:
+    recall.append(i[i.index(max(i))]/sum(i))
+
+print("Recall: ", recall)
+
+precision = []
+for i in range(len(matrix)):
+    precision.append(matrix[i][i]/sum([j[i] for j in matrix]))
+
+print("Precision: ", precision)
+
+f = []
+for i in range(len(precision)):
+  f.append(2*(precision[i]*recall[i])/(precision[i]+recall[i]))
+
+
+print("F: ", f)
