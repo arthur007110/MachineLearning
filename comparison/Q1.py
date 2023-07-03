@@ -2,8 +2,13 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 import matplotlib.pyplot as plt
-from scipy.stats import t 
-import math
+from scipy.stats import t, tstd
+import math, random
+
+def salvarArquivo(conteudo, nome="resultado.txt"):
+  arquivo = open("comparison\\"+str(nome), "a")
+  arquivo.write(conteudo)
+  arquivo.close()
 
 def validatePredictions(predictions, correctValues): 
   correct = 0
@@ -31,22 +36,32 @@ for i in data:
   y.append(int(i[index_of_class]))
   X.append([int(j) for j in i[:index_of_class]])
 
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
-neigh = KNeighborsClassifier(n_neighbors=1, weights="distance")
+
+skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=1)
+neigh = KNeighborsClassifier(n_neighbors=1, weights="uniform")
+
+r1 = random.randint(1, 3)
+r2 = random.randint(1, 3)
+
+X_Random = []
+y_random = []
+for i in range(parameter_amount):
+  X_Random += X[:math.ceil(len(X)/r1)]
+  y_random += y[:math.ceil(len(y)/r1)]
 
 accuracy = []
 t_predictions = []
 #print(y[:1], X[:1])
+salvarArquivo("tamanho do teste: "+str(len(y_random))+"\n","precisoes.txt")
+salvarArquivo("tamanho do treino: "+str(len(X_Random))+ "\n","precisoes.txt")
 f1 = []
-for train_index, test_index in skf.split(X, y):
-    print("iteration: ", len(t_predictions)+1)
-    #print(train_index[:5], test_index[:5])
+for train_index, test_index in skf.split(X_Random, y_random):
     x_train_fold, x_test_fold, y_train_fold, y_test_fold = [], [], [], []
     for i in train_index:
-      x_test_fold.append(X[i])
-      x_train_fold.append(X[i])
-      y_train_fold.append(y[i])
-      y_test_fold.append(y[i])
+      x_test_fold.append(X_Random[i])
+      x_train_fold.append(X_Random[i])
+      y_train_fold.append(y_random[i])
+      y_test_fold.append(y_random[i])
     
     #print(y_train_fold[:5], y_test_fold[:5],x_train_fold[:5], x_test_fold[:5])
     neigh.fit(x_train_fold, y_train_fold)
@@ -55,14 +70,28 @@ for train_index, test_index in skf.split(X, y):
     t_predictions.append(validatePredictions(predictions, y_test_fold))
     
 
-print('tamanho do teste: ', len(t_predictions))
-print("Média da precisão: ", sum(t_predictions)/len(t_predictions))
+media = sum(t_predictions)/len(t_predictions)
+print('testes feitos: ', len(t_predictions))
+print("Média da precisão: ", media)
 print("Maior precisão: ", max(t_predictions))
 print("Minimo medida F:",min(f1))
-print(t_predictions)
+#print(t_predictions)
 
-interval = t.interval(0.95, len(t_predictions)-1, loc=sum(t_predictions)/len(t_predictions), scale=math.sqrt(sum([(i-(sum(t_predictions)/len(t_predictions)))**2 for i in t_predictions])/(len(t_predictions)-1)))
+media = sum(t_predictions)/len(t_predictions)
+scale = tstd(t_predictions)
+if scale == 0.0:
+    scale = 0.000001
+
+interval = t.interval(0.95, len(t_predictions)-1, loc=media, scale=scale)
 plt.hist(f1)
 #plt.show()
 
 print("Intervalo de confiança: ", interval)
+salvarArquivo("Media da precisao: "+str(media)+"\n")
+salvarArquivo("Maior precisao: "+str(max(t_predictions))+"\n")
+salvarArquivo("Minimo medida F: "+str(min(f1))+"\n")
+salvarArquivo("Intervalo de confianca: "+str(interval)+"\n")
+
+for i, index in enumerate(t_predictions):
+  salvarArquivo(str(i)+" -Precisao: "+str(index)+"\n", "precisoes.txt")
+#salvarArquivo("histograma: "+plt.hist(f1)+"\n", "histograma.png")
