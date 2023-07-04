@@ -62,8 +62,17 @@ for i in range(100):
 
 media = sum(t_predictions[0])/len(t_predictions[0])
 media2 = sum(t_predictions[1])/len(t_predictions[1])
+
+diff = 0
+dif = []
+for i in range(len(t_predictions[0])):
+   diff += (t_predictions[0][i] - t_predictions[1][i])
+   dif.append(t_predictions[0][i] - t_predictions[1][i])
+
+
+print("Diferença das taxas: ", diff, diff/len(t_predictions[0]))
 print('tamanho do teste: ', len(t_predictions[0]), len(t_predictions[1]))
-print("Média da precisão: ", media, media2)
+print("Média da precisão: ", media, media2, media-media2)
 print("Maior precisão: ", max(t_predictions[0]), max(t_predictions[1]))
 print("Minimo medida F:",min(f1[0]), min(f1[1]))
 #print(t_predictions)
@@ -79,6 +88,12 @@ if scale2 == 0.0:
 interval = t.interval(0.95, len(t_predictions[0])-1, loc=media, scale=scale)
 interval2 = t.interval(0.95, len(t_predictions[1])-1, loc=media2, scale=scale2)
 print("Intervalo de confiança: ", interval, interval2)
+
+scaleDif = tstd(dif)
+mediaDif = sum(dif)/len(dif)
+intervalDif = t.interval(0.95, len(dif)-1, loc=mediaDif, scale=scaleDif)
+
+print("Intervalo de confiança da diferença: ", intervalDif)
 
 #print(t_predictions[0], t_predictions[1])
 

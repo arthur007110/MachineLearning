@@ -37,7 +37,7 @@ for i in data:
   X.append([int(j) for j in i[:index_of_class]])
 
 
-skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=1)
+skf = StratifiedKFold(n_splits=100, shuffle=True, random_state=1)
 neigh = KNeighborsClassifier(n_neighbors=1, weights="uniform")
 
 r1 = random.randint(1, 3)
@@ -55,12 +55,15 @@ t_predictions = []
 salvarArquivo("tamanho do teste: "+str(len(y_random))+"\n","precisoes.txt")
 salvarArquivo("tamanho do treino: "+str(len(X_Random))+ "\n","precisoes.txt")
 f1 = []
-for train_index, test_index in skf.split(X_Random, y_random):
+for train_index, test_index in skf.split(X_Random,y_random):
     x_train_fold, x_test_fold, y_train_fold, y_test_fold = [], [], [], []
     for i in train_index:
-      x_test_fold.append(X_Random[i])
       x_train_fold.append(X_Random[i])
       y_train_fold.append(y_random[i])
+     
+    
+    for i in test_index:
+      x_test_fold.append(X_Random[i])
       y_test_fold.append(y_random[i])
     
     #print(y_train_fold[:5], y_test_fold[:5],x_train_fold[:5], x_test_fold[:5])
@@ -70,28 +73,30 @@ for train_index, test_index in skf.split(X_Random, y_random):
     t_predictions.append(validatePredictions(predictions, y_test_fold))
     
 
-media = sum(t_predictions)/len(t_predictions)
+media = sum(f1)/len(f1)
 print('testes feitos: ', len(t_predictions))
-print("Média da precisão: ", media)
-print("Maior precisão: ", max(t_predictions))
+print("Média da Medida F: ", media)
+print("Maior medida f: ", max(f1))
 print("Minimo medida F:",min(f1))
 #print(t_predictions)
 
-media = sum(t_predictions)/len(t_predictions)
-scale = tstd(t_predictions)
+
+scale = tstd(f1)
 if scale == 0.0:
     scale = 0.000001
 
-interval = t.interval(0.95, len(t_predictions)-1, loc=media, scale=scale)
+interval = t.interval(0.95, len(f1)-1, loc=media, scale=scale)
 plt.hist(f1)
 #plt.show()
 
 print("Intervalo de confiança: ", interval)
-salvarArquivo("Media da precisao: "+str(media)+"\n")
-salvarArquivo("Maior precisao: "+str(max(t_predictions))+"\n")
+salvarArquivo("Media da medida f: "+str(media)+"\n")
+salvarArquivo("Maior medida f: "+str(max(t_predictions))+"\n")
 salvarArquivo("Minimo medida F: "+str(min(f1))+"\n")
 salvarArquivo("Intervalo de confianca: "+str(interval)+"\n")
 
 for i, index in enumerate(t_predictions):
   salvarArquivo(str(i)+" -Precisao: "+str(index)+"\n", "precisoes.txt")
 #salvarArquivo("histograma: "+plt.hist(f1)+"\n", "histograma.png")
+
+plt.show()
