@@ -1,4 +1,5 @@
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import f1_score
 from scipy.stats import t, tstd
 import math
@@ -33,23 +34,14 @@ for i in data:
 
 neigh = KNeighborsClassifier(n_neighbors=1, weights="uniform")
 
-x_train = X[:math.ceil(len(X)/2)]
-y_train = y[:math.ceil(len(y)/2)]
-
-x2_train = X2[:math.ceil(len(X2)/2)]
-
-x_test = X[math.ceil(len(X)/2):]
-x2_test =  X2[math.ceil(len(X2)/2):]
-y_test = y[math.ceil(len(y)/2):]
-
-
-print("tamanho do teste: ", len(x_test), len(y_test))
-print("tamanho do treino: ",len(x_train), len(y_train))
 
 t_predictions = [[] for _ in range(2)]
 f1 = [[] for _ in range(2)]
 
 for i in range(100):
+    x_train,x_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=i)
+    x2_train, x2_test, y2_train, y2_test = train_test_split(X2, y, test_size=0.5, random_state=i)
+
     neigh.fit(x_train, y_train)
     predictions = neigh.predict(x_test)
     f1[0].append(f1_score(y_test, predictions, average="micro"))
@@ -62,7 +54,6 @@ for i in range(100):
 
 media = sum(t_predictions[0])/len(t_predictions[0])
 media2 = sum(t_predictions[1])/len(t_predictions[1])
-
 diff = 0
 dif = []
 for i in range(len(t_predictions[0])):
@@ -91,6 +82,9 @@ print("Intervalo de confiança: ", interval, interval2)
 
 scaleDif = tstd(dif)
 mediaDif = sum(dif)/len(dif)
+
+if scaleDif == 0.0:
+    scaleDif = 0.000001
 intervalDif = t.interval(0.95, len(dif)-1, loc=mediaDif, scale=scaleDif)
 
 print("Intervalo de confiança da diferença: ", intervalDif)

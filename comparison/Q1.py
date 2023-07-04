@@ -1,5 +1,5 @@
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.metrics import f1_score
 import matplotlib.pyplot as plt
 from scipy.stats import t, tstd
@@ -43,28 +43,23 @@ neigh = KNeighborsClassifier(n_neighbors=1, weights="uniform")
 r1 = random.randint(1, 3)
 r2 = random.randint(1, 3)
 
-X_Random = []
-y_random = []
-for i in range(parameter_amount):
-  X_Random += X[:math.ceil(len(X)/r1)]
-  y_random += y[:math.ceil(len(y)/r1)]
 
 accuracy = []
 t_predictions = []
 #print(y[:1], X[:1])
-salvarArquivo("tamanho do teste: "+str(len(y_random))+"\n","precisoes.txt")
-salvarArquivo("tamanho do treino: "+str(len(X_Random))+ "\n","precisoes.txt")
+salvarArquivo("tamanho do teste: "+str(len(y))+"\n","precisoes.txt")
+salvarArquivo("tamanho do treino: "+str(len(X))+ "\n","precisoes.txt")
 f1 = []
-for train_index, test_index in skf.split(X_Random,y_random):
+for train_index, test_index in skf.split(X,y):
     x_train_fold, x_test_fold, y_train_fold, y_test_fold = [], [], [], []
     for i in train_index:
-      x_train_fold.append(X_Random[i])
-      y_train_fold.append(y_random[i])
+      x_train_fold.append(X[i])
+      y_train_fold.append(y[i])
      
     
     for i in test_index:
-      x_test_fold.append(X_Random[i])
-      y_test_fold.append(y_random[i])
+      x_test_fold.append(X[i])
+      y_test_fold.append(y[i])
     
     #print(y_train_fold[:5], y_test_fold[:5],x_train_fold[:5], x_test_fold[:5])
     neigh.fit(x_train_fold, y_train_fold)
