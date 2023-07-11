@@ -38,7 +38,6 @@ label_encoder = LabelEncoder()
 
 data = pd.get_dummies(data, columns=categorical_columns)
 
-# Iterando sobre as colunas categóricas e aplicando a transformação
 
 y = data.columns.get_loc("area")
 
@@ -54,8 +53,10 @@ for i in range(len(data)):
            x2.append(float(data[i][j]))
 
     X.append(x2)
-y = [int(i[y]) for i in data]
-
+y = [int(i[y])+1 for i in data]
+# transforma em log
+y = np.log(y)
+y = [int(i) for i in y]
 print(y[:5])
 accuracy = []
 
@@ -65,6 +66,8 @@ for i in range(100):
     x_train,x_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=i)
     neigh.fit(x_train, y_train)
     predictions = neigh.predict(x_test)
+    
+    y_test = np.exp(y_test)
     accuracy.append(validatePredictions(predictions, y_test))
     rmse = np.sqrt(np.mean((y_test - predictions) ** 2))
 

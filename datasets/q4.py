@@ -38,7 +38,6 @@ label_encoder = LabelEncoder()
 
 data = pd.get_dummies(data, columns=categorical_columns)
 
-# Iterando sobre as colunas categóricas e aplicando a transformação
 
 y = data.columns.get_loc("area")
 
@@ -54,9 +53,10 @@ for i in range(len(data)):
            x2.append(float(data[i][j]))
 
     X.append(x2)
-y = [int(i[y]) for i in data]
-
-print(y[:5])
+y = [int(i[y])+1 for i in data]
+# transforma em log
+y = np.log(y)
+y = [int(i) for i in y]
 accuracy = []
 
 rmse = []
@@ -79,7 +79,7 @@ interval = [t.interval(.95, len(accuracy)-1, loc=media, scale=scale)]
 print(interval)
 
 n = len(y_test)
-alpha = 0.05  # 95% confidence interval
+alpha = 0.05 
 df = n - 1
 t_critical = t.ppf(1 - alpha/2, df)
 
