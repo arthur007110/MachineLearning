@@ -25,25 +25,60 @@ data, classes_data, numerical_classes, labels = datasets.read(dataset_name='fore
 
 # Carregando os dados em um DataFrame do pandas
 data = pd.read_csv('./datasets/forest_fires/forestfires.csv', sep=',')
-#print(data[:5])
+df = pd.DataFrame(data)
 
+days_map = {
+  'sun': 1,
+  'mon': 2,
+  'tue': 3,
+  'wed': 4,
+  'thu': 5,
+  'fri': 6,
+  'sat': 7,
+}
 
-data = data.iloc[1: , :]
+months_map = {
+  'jan': 1,
+  'feb': 2,
+  'mar': 3,
+  'apr': 4,
+  'may': 5,
+  'jun': 6,
+  'jul': 7,
+  'aug': 8,
+  'sep': 9,
+  'oct': 10,
+  'nov': 11,
+  'dec': 12,
+}
 
+days_df = df.drop(['X','Y','month','FFMC','DMC','DC','ISI','temp','RH','wind','rain','area'], axis=1, inplace=False)
+months_df = df.drop(['X','Y','day','FFMC','DMC','DC','ISI','temp','RH','wind','rain','area'], axis=1, inplace=False)
+remaining_df = df.drop(['day','month'], axis=1, inplace=False)
+remaining_df = remaining_df.values.tolist()
 
-categorical_columns = ['day','month']
+for index, day in enumerate(days_df['day']):
+  day_number = days_map[day]
+  remaining_df[index].append(math.sin(2 * math.pi * (day_number/7)))
+  remaining_df[index].append(math.cos(2 * math.pi * (day_number/7)))
 
-# Criando uma instância do LabelEncoder
-label_encoder = LabelEncoder()
+for index, month in enumerate(months_df['month']):
+  month_number = months_map[month]
+  remaining_df[index].append(math.sin(2 * math.pi * (month_number/12)))
+  remaining_df[index].append(math.cos(2 * math.pi * (month_number/12)))
 
-data = pd.get_dummies(data, columns=categorical_columns)
+finnaly_df = pd.DataFrame(remaining_df, columns=['X','Y','FFMC','DMC','DC','ISI','temp','RH','wind','rain','area', 'day_sin', 'day_cos', 'month_sin', 'month_cos'])
+print(finnaly_df)
 
+finnaly_df = finnaly_df.iloc[1: , :]
 
-y = data.columns.get_loc("area")
+# Iterando sobre as colunas categóricas e aplicando a transformação
+
+y = finnaly_df.columns.get_loc("area")
 
 print(y)
 
-data = data.values.tolist()
+data = finnaly_df.values.tolist()
 
 X = []
 for i in range(len(data)):
