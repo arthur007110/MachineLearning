@@ -53,7 +53,7 @@ for l in range(1, 16):
         t_predictions[l-1].append(validatePredictions(predictions, y_test))
 media = [sum(i)/len(i) for i in t_predictions]
 scale = [tstd(i) for i in t_predictions]
-interval = [t.interval(.95, len(t_p0redictions[i])-1, loc=media[i], scale=scale[i]) for i in range(len(t_predictions))]
+interval = [t.interval(.95, len(t_predictions[i])-1, loc=media[i], scale=scale[i]) for i in range(len(t_predictions))]
 
 print(interval)
 print("")
