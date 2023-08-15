@@ -7,7 +7,6 @@ import math, random
 import pandas as pd
 import numpy as np
 
-
 def validatePredictions(predictions, correctValues): 
   correct = 0
   incorrect = 0
@@ -16,12 +15,10 @@ def validatePredictions(predictions, correctValues):
       incorrect += 1
     else:
       correct += 1
-  #print("Correct: ", correct, "Incorrect: ", incorrect, "Accuracy: ", correct/(correct+incorrect))
   return correct/(correct+incorrect)
 
 data_url = "http://lib.stat.cmu.edu/datasets/boston"
 raw_df = pd.read_csv(data_url, sep="\s+", skiprows=22, header=None)
-print(raw_df[:1])
 data = np.hstack([raw_df.values[::2, :], raw_df.values[1::2, :2]])
 target = raw_df.values[1::2, 2]
 
@@ -33,9 +30,7 @@ X = [] #X representa as caracteristicas
 for i in data:
   X.append([float(j) for j in i])
 
-
 intervals = list(range(int(min(target)),int(max(target)), 10))
-print(intervals)
 
 for i in target:
   if (i >= intervals[0] and i < intervals[1]):
@@ -49,20 +44,15 @@ for i in target:
   else:
     y.append(4)
 
-
 rmse = []
 rmse_lib = [] #RMSE com a biblioteca
 x_train,x_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=10)
 for i in range(1,10):
-    print(x_train[:5], y_train[:5])
-    print(len(x_train), len(x_test), len(y_train), len(y_test))
-    neigh = KNeighborsClassifier(n_neighbors=i, weights="uniform")
-    neigh.fit(x_train, y_train)
-    predictions = neigh.predict(x_test)
-    print("predictions: ", predictions)
-    rmse.append(np.sqrt(np.mean((y_test - predictions) ** 2)))
-    rmse_lib.append(mean_squared_error(y_test, predictions)) #RMSE com a biblioteca
-
+  neigh = KNeighborsClassifier(n_neighbors=i, weights="uniform")
+  neigh.fit(x_train, y_train)
+  predictions = neigh.predict(x_test)
+  rmse.append(np.sqrt(np.mean((y_test - predictions) ** 2)))
+  rmse_lib.append(mean_squared_error(y_test, predictions)) #RMSE com a biblioteca
 
 print("rsme: ", rmse)
 print("rsme_lib: ", rmse_lib)
