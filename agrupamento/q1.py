@@ -36,6 +36,8 @@ for i in predicts:
     plt.bar(iris,classes, color='blue')
     #print(plt.)
    
+   
+
     plt.show()
 
 print(distancia)

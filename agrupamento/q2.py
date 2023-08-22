@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 from sklearn_extra.cluster import KMedoids
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -16,7 +17,8 @@ X = df.iloc[:, 1:]
 y = df['class']
 
 #stratified holdout 50/50
-classes = np.zeros(3)
+
+classes = []
 sss = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=0)
 for train_index, test_index in sss.split(X, y):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
@@ -38,11 +40,9 @@ for train_index, test_index in sss.split(X, y):
     knn.fit(X_train, y_train)
     
     predicts = knn.predict(X_test)
-    print(len(predicts), len(y_test))
-    for j in range(len(predicts)):
-        if predicts[j] == y_test[j]:
-            classes[predicts[j]] += 1
-        
+
+    classes.append(accuracy_score(y_test, predicts))
+    
 
 print(classes)
 

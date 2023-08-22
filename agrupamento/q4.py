@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 from sklearn.cluster import KMeans
 from PIL import Image
@@ -12,7 +11,7 @@ print(altura, largura, canais)
 
 vetor_atributos = pixels.reshape(altura * largura, 3)
 print(vetor_atributos)
-list_k = [8,64,512]
+list_k = [512]
 for i in list_k:
     kmeans = KMeans(n_clusters=i, random_state=0, n_init=100, max_iter=10)
     kmeans.fit(vetor_atributos)
